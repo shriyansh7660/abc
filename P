@@ -1,0 +1,150 @@
+Program-10
+import java.sql.*;
+public class StudentDatabaseApp {
+    // JDBC URL, username, and password of MySQL server
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String DB_USER = "your_username";
+    private static final String DB_PASSWORD = "your_password";
+
+    public static void main(String[] args) {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD)) {
+            Statement statement = connection.createStatement();
+            String createQuery = "INSERT INTO students (id, name, age, department) VALUES (1, 'John', 21, 'Computer Science')";
+            statement.executeUpdate(createQuery);
+            System.out.println("Record created successfully.");
+            String readQuery = "SELECT * FROM students";
+            ResultSet resultSet = statement.executeQuery(readQuery);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                String department = resultSet.getString("department");
+                System.out.println("ID: " + id + ", Name: " + name + ", Age: " + age + ", Department: " + department);
+            }
+
+            String updateQuery = "UPDATE students SET age = 22 WHERE name = 'John'";
+            statement.executeUpdate(updateQuery);
+            System.out.println("Record updated successfully.");
+            String deleteQuery = "DELETE FROM students WHERE name = 'John'";
+            statement.executeUpdate(deleteQuery);
+            System.out.println("Record deleted successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+
+Program-11 
+index.html:
+<html
+<head>
+<title>VoterApp</title>
+</head>
+<body>
+<form action= "http://localhost:8080/CheckAge/check" method="get">
+<fieldset style="width:20%; background-color:#80ffcc">
+<table>
+<tr><td>Name</td><td><input type="text" name="name"></td></tr>
+<tr><td>Age</td><td><input type="text" name="age"></td></tr>
+<tr><td></td>
+<td><input type = "submit" value="Check Eligibility"></td></tr>
+</table>
+</fieldset>
+</form>
+</body>
+</html>
+VoterSrv.java:
+import java.io.*;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class VoterSrv extends HttpServlet
+
+{
+public void service(HttpServletRequest req, HttpServletResponse res) throws IOException,
+ServletException
+{
+//set response content type
+ res.setContentType("text/html");
+//get printWrite obj
+PrintWriter pw = res.getWriter();
+//read form data from page as request parameter 
+String name = req.getParameter("name");
+int age = Integer.parseInt(req.getParameter("age")); if (age>=18)
+{
+pw.println("<font color='green' size='4'>Welcome "+name+" to this site</font>");
+}
+else
+pw.println("<font color='red' size='4'>Hello "+name+", you are not authorized to visit the site</font>");
+
+//add hyperlink to dynamic page
+ pw.println("<br><br><a href= 'index.html'>back</a>");
+//close the stream 
+pw.close();
+}
+}
+web.xml:
+<web-app>
+<servlet>
+<servlet-name>abc</servlet-name>
+<servlet-class>VoterSrv</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>abc</servlet-name>
+<url-pattern>/check</url-pattern>
+</servlet-mapping>
+</web-app>
+
+
+
+
+
+
+
+
+Program-12
+Sessionjsp.html
+<head> <title> SESSION LOGIN </title> </head>
+<body>
+<center>
+<form action="http://localhost:8080/jsp/Session1.jsp" method="get"> Enter Name: <input type="text" name="uname"> <br>
+<input type="submit" value="LOGIN" name="register">
+</form>
+<html>
+</center>
+</body>
+</html>
+Session1.jsp
+<%@page language="java" import="java.util.*" errorPage=""%>
+<form method="get" action="http://localhost:8080/jsp/Session2.jsp">
+<%
+Date d=new Date();
+%>
+<p align="right"> Time;<%=d.getTime()%></p>
+<%
+String un=request.getParameter("uname"); session.setAttribute("user",un); session.setAttribute("time",d.getTime());
+%>
+Hello <%=un%>
+<br><br>
+<input type="submit" value="logout">
+</form>
+Session2.jsp
+<%@page language="java" import="java.util.*" errorPage=""%>
+<%
+Date d2=new Date();
+String un=(String)session.getAttribute("user"); 
+Long t1=(Long)session.getAttribute("time"); 
+Long t2=d2.getTime();
+%>
+Thank you <%=un%>
+<br><br>
+Session duration: <%=(t2-t1)/(60*60)%> seconds
+<% session.invalidate();%>
+
